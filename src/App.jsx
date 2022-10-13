@@ -52,7 +52,7 @@ function App() {
   return (
     <>
       <h1 className='text-3xl'>Atomic Trade checker</h1>
-      <p className='text-xs mb-2'>WEBSITE STYLING COMMING SOON, enjoy this ugly functioning website for now</p>
+      <p className='text-xs mb-2'>WEBSITE STYLING COMING SOON, enjoy this ugly functioning website for now</p>
       <input type="text" onChange={(e) => setOfferId(e.target.value)} className="border border-green-500" placeholder='TRADE ID' />
       <button onClick={() => getOffer(offerId)} className="px-2 ml-2 bg-green-500">Check</button>
 
