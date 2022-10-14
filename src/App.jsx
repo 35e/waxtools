@@ -67,12 +67,12 @@ function App() {
       <div className='p-5 max-w-4xl mx-auto mt-12 bg-[#121212] rounded-xl'>
         <div className='flex'>
           <input type="text" onChange={(e) => setOfferId(e.target.value)} className="bg-black grow p-2 rounded-l-xl" placeholder='TRADE ID' />
-          <button onClick={() => getOffer(offerId)} className="p-2 bg-[#ff9000] animate-pulse text-black rounded-r-xl font-bold">Check</button>
+          <button onClick={() => getOffer(offerId)} className="p-2 bg-blue-500 text-black rounded-r-xl font-bold check-btn">Check</button>
         </div>
 
         <div className='mt-6 flex flex-col gap-3'>
           <Collapsible label="How do I get the trade id?">
-            <p>Go to the page of the trade and you will see the ID in the link upper corner</p>
+            <p>Go to the page of the trade and you will see the ID in the left upper corner</p>
             <img src="./trade_tut.png" alt="a good tutorial" />
           </Collapsible>
 
@@ -85,37 +85,43 @@ function App() {
             <p>The website is still in early development. So there might be some errors.</p>
           </Collapsible>
         </div>
-        
-        { data && (
-          <div className='mt-20'>
-            {data && (
-              <div className='flex gap-8 justify-center'>
-                {data.map((user, i) => (
-                  <div key={i}>
-                    <h2 className='text-2xl'>{user.wallet}</h2>
-                    <p className='text-xl'>Total value: {(user.total).toFixed(2)} WAX</p>
-                    <div className='flex flex-col gap-3'>
-                      {user.assets.map((asset, index) => (
-                        <div className='flex items-center gap-2 bg-[#434C5E] text-[#ECEFF4] rounded-md overflow-hidden'>
-                          {asset.type === 'image' ? (
-                            <>
-                              <img src={asset.ipfs} alt="asset" key={index} className='w-16 h-16 p-2 object-cover' />
-                            </>
-                          ) : (
-                            <video src={asset.ipfs} key={index} className='w-16 h-16 p-2' autoPlay muted />
-                          )}
-                          <p>{(asset.price).toFixed(2)} WAX</p>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
-        )}
-        
       </div>
+
+      {data && (
+        <div className='p-5 max-w-4xl mx-auto mt-6 bg-[#121212] rounded-xl'>
+          <h2 className='font-bold text-xl'>Trade information</h2>
+          { data && (
+            <div>
+
+                <div className='flex gap-6'>
+                  {data.map((user, i) => (
+                    <div key={i} className="w-full mt-4">
+                      <p>Wallet: <a href={`https://wax.atomichub.io/profile/${user.wallet}`} target="_blank">{user.wallet}</a></p>
+                      <p>Total value: {(user.total).toFixed(2)} WAX</p>
+                      <div className='flex flex-col gap-2 mt-4'>
+                        {user.assets.map((asset, index) => (
+                          <a href={`https://wax.atomichub.io/explorer/asset/${asset.asset}`} target="_blank" className='hover:scale-105 transition-transform duration-100 ease-in-out'>
+                            <div className='flex items-center gap-2 bg-black text-[#ECEFF4] rounded-md overflow-hidden'>
+                              {asset.type === 'image' ? (
+                                <>
+                                  <img src={asset.ipfs} alt="asset" key={index} className='w-16 h-16 p-2 object-cover' />
+                                </>
+                              ) : (
+                                <video src={asset.ipfs} key={index} className='w-16 h-16 p-2' autoPlay muted />
+                              )}
+                              <p>{(asset.price).toFixed(2)} WAX</p>
+                            </div>
+                          </a>
+                        ))}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+
+            </div>
+          )}
+        </div>
+      )}
     </div>
   );
 }
