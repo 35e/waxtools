@@ -7,8 +7,8 @@ export default function Collapsible(props) {
   if (parentRef.current) { console.log(parentRef.current.scrollHeight) }
 
   return (
-    <div className="collapsible p-2 px-4 bg-[#1a1a1a] rounded-xl cursor-pointer" onClick={() => setIsOpen(!isOpen)}>
-      <p className="cursor-pointer">{props.label}</p>
+    <div className={`collapsible ${isOpen ? 'open': ''}`} onClick={() => setIsOpen(!isOpen)}>
+      <p className="collapsible-label">{props.label}</p>
       <div className="collapsible-parent" ref={parentRef} style={isOpen ? {
           maxHeight: parentRef.current?.scrollHeight + "px"
         } : {

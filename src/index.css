@@ -11,6 +11,24 @@ body {
 }
 
 /* Collapsible */
+.collapsible {
+  @apply p-2 px-4 bg-[#1a1a1a] rounded-xl cursor-pointer relative;
+}
+
+.collapsible-label {
+  @apply flex justify-between items-center;
+}
+
+.collapsible-label::after {
+  content: url('/chavron.svg');
+  fill: white;
+  @apply float-right w-[15px] h-[15px] text-white rotate-180 transition-transform duration-500;
+}
+
+.collapsible.open .collapsible-label::after {
+  @apply rotate-0;
+}
+
 .collapsible .collapsible-parent {
   @apply max-h-0 overflow-hidden transition-all duration-500 ease-in-out;
 }
