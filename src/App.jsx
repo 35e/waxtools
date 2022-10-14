@@ -67,9 +67,9 @@ function App() {
       <p className='text-xs mb-2 text-center'>The website is still in development, be sure to always double check a trade yourself!</p>
 
       <div className='p-5 max-w-4xl mx-auto mt-12 bg-[#121212] rounded-xl'>
-        <div className='flex'>
-          <input type="text" onChange={(e) => setOfferId(e.target.value)} className="bg-black grow p-2 rounded-l-xl" placeholder='Trade ID' />
-          <button onClick={() => getOffer(offerId)} className="p-2 bg-blue-500 text-black rounded-r-xl font-bold check-btn">Check</button>
+        <div className='grid grid-cols-1 md:grid-cols-3'>
+          <input type="text" onChange={(e) => setOfferId(e.target.value)} className="bg-black md:col-span-2 p-2 rounded-t-xl rounded-b-none md:rounded-l-xl md:rounded-r-none" placeholder='Trade ID' />
+          <button onClick={() => getOffer(offerId)} className="p-2 bg-blue-500 text-black rounded-t-none rounded-b-xl md:rounded-r-xl md:rounded-l-none font-bold check-btn">Check trade</button>
         </div>
 
         <div className='mt-6 flex flex-col gap-3'>
