@@ -19,8 +19,9 @@ function App() {
       wallet: res.sender_name,
       assets: res.sender_assets.map(asset => {
         return {
-          asset: asset.asset_id,
-          template: asset.template.template_id,
+          asset_id: asset.asset_id,
+          template_id: asset.template.template_id,
+          name: asset.data.name,
           price: asset.backed_tokens[0]?.amount / 100000000,
           ipfs: asset.data.img ? ipfsLink + asset.data.img : ipfsLink + asset.data.video,
           type: asset.data.img ? 'image' : 'video'
@@ -32,8 +33,9 @@ function App() {
       wallet: res.recipient_name,
       assets: res.recipient_assets.map(asset => {
         return {
-          asset: asset.asset_id,
-          template: asset.template.template_id,
+          asset_id: asset.asset_id,
+          template_id: asset.template.template_id,
+          name: asset.data.name,
           price: asset.backed_tokens[0]?.amount / 100000000,
           ipfs: asset.data.img ? ipfsLink + asset.data.img : ipfsLink + asset.data.video,
           type: asset.data.img ? 'image' : 'video'
@@ -45,7 +47,7 @@ function App() {
     const allAssets = sender.assets.concat(receiver.assets)
 
     for (const asset of allAssets) {
-      const data = (await (await fetch(priceLink + asset.template)).json()).data[0]
+      const data = (await (await fetch(priceLink + asset.template_id)).json()).data[0]
       if (data && ((data.listing_price / 100000000) > asset.price || isNaN(asset.price))) {
         asset.price = data.listing_price / 100000000
       }
@@ -55,18 +57,18 @@ function App() {
     sender.total = sender.assets.reduce((a, b) => a + b.price, 0)
     receiver.total = receiver.assets.reduce((a, b) => a + b.price, 0)
 
-    setData([sender, receiver])
+    setData({ offer_id: res.offer_id, parties: [sender, receiver] })
     setLoading(false)
   }
 
   return (
     <div className='content'>
-      <h1 className='text-2xl md:text-5xl font-black text-center mt-10'>Atomic Trade checker</h1>
+      <h1 className='text-2xl md:text-5xl font-black text-center mt-10'>Atomic Trade Checker</h1>
       <p className='text-xs mb-2 text-center'>The website is still in development, be sure to always double check a trade yourself!</p>
 
       <div className='p-5 max-w-4xl mx-auto mt-12 bg-[#121212] rounded-xl'>
         <div className='flex'>
-          <input type="text" onChange={(e) => setOfferId(e.target.value)} className="bg-black grow p-2 rounded-l-xl" placeholder='TRADE ID' />
+          <input type="text" onChange={(e) => setOfferId(e.target.value)} className="bg-black grow p-2 rounded-l-xl" placeholder='Trade ID' />
           <button onClick={() => getOffer(offerId)} className="p-2 bg-blue-500 text-black rounded-r-xl font-bold check-btn">Check</button>
         </div>
 
@@ -81,7 +83,7 @@ function App() {
             <p>If you have any questions, feel free to send me a message.</p>
           </Collapsible>
 
-          <Collapsible label="It doesn't even work...">
+          <Collapsible label="Why is my trade not showing up?">
             <p>The website is still in early development. So there might be some errors.</p>
           </Collapsible>
         </div>
@@ -89,35 +91,36 @@ function App() {
 
       {data && (
         <div className='p-5 max-w-4xl mx-auto mt-6 bg-[#121212] rounded-xl'>
-          <h2 className='font-bold text-xl'>Trade information</h2>
-          { data && (
+          <h2 className='font-bold text-xl'>Trade <a href={`https://wax.atomichub.io/trading/trade-offers#tradeoffers-${data.offer_id}`} target="_blank">#{data.offer_id}</a></h2>
+          {data && (
             <div>
-
-                <div className='flex gap-6'>
-                  {data.map((user, i) => (
-                    <div key={i} className="w-full mt-4">
-                      <p>Wallet: <a href={`https://wax.atomichub.io/profile/${user.wallet}`} target="_blank">{user.wallet}</a></p>
-                      <p>Total value: {(user.total).toFixed(2)} WAX</p>
-                      <div className='flex flex-col gap-2 mt-4'>
-                        {user.assets.map((asset, index) => (
-                          <a href={`https://wax.atomichub.io/explorer/asset/${asset.asset}`} target="_blank" className='hover:scale-105 transition-transform duration-100 ease-in-out'>
-                            <div className='flex items-center gap-2 bg-black text-[#ECEFF4] rounded-md overflow-hidden'>
-                              {asset.type === 'image' ? (
-                                <>
-                                  <img src={asset.ipfs} alt="asset" key={index} className='w-16 h-16 p-2 object-cover' />
-                                </>
-                              ) : (
-                                <video src={asset.ipfs} key={index} className='w-16 h-16 p-2' autoPlay muted />
-                              )}
+              <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
+                {data.parties.map((user, i) => (
+                  <div key={i} className="w-full mt-4">
+                    <p>Wallet: <a href={`https://wax.atomichub.io/profile/${user.wallet}`} target="_blank">{user.wallet}</a></p>
+                    <p>Total value: {(user.total).toFixed(2)} WAX</p>
+                    <div className='flex flex-col gap-2 mt-4'>
+                      {user.assets.map((asset, index) => (
+                        <a key={index} href={`https://wax.atomichub.io/explorer/asset/${asset.asset_id}`} target="_blank" className='bg-black text-white hover:bg-gray-900 rounded-md transition-color duration-100 ease-in-out'>
+                          <div className='flex items-center gap-2 overflow-hidden text-sm'>
+                            {asset.type === 'image' ? (
+                              <>
+                                <img src={asset.ipfs} alt="asset" key={index} className='w-16 h-16 p-2 object-cover' />
+                              </>
+                            ) : (
+                              <video src={asset.ipfs} key={index} className='w-16 h-16 p-2' autoPlay muted loop />
+                            )}
+                            <div>
+                              <p>{asset.name}</p>
                               <p>{(asset.price).toFixed(2)} WAX</p>
                             </div>
-                          </a>
-                        ))}
-                      </div>
+                          </div>
+                        </a>
+                      ))}
                     </div>
-                  ))}
-                </div>
-
+                  </div>
+                ))}
+              </div>
             </div>
           )}
         </div>
