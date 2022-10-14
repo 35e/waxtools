@@ -1,10 +1,11 @@
-import { useState, useEffect } from 'react'
-import './App.css'
+import { useState } from 'react'
 import axios from 'axios'
+
+import Collapsible from '../components/Collapsible'
 
 function App() {
   const [offerId, setOfferId] = useState('')
-  const [data, setData] = useState([])
+  const [data, setData] = useState()
   const [loading, setLoading] = useState(false)
 
   const priceLink = 'https://wax.api.atomicassets.io/atomicmarket/v2/sales?limit=1&order=asc&sort=price&state=1&template_id='
@@ -59,42 +60,58 @@ function App() {
   }
 
   return (
-    <>
-      <h1 className='text-3xl'>Atomic Trade checker</h1>
-      <p className='text-xs mb-2'>WEBSITE STYLING COMING SOON, enjoy this ugly functioning website for now</p>
-      <input type="text" onChange={(e) => setOfferId(e.target.value)} className="border border-green-500" placeholder='TRADE ID' />
-      <button onClick={() => getOffer(offerId)} className="px-2 ml-2 bg-green-500">Check</button>
+    <div className='content'>
+      <h1 className='text-5xl font-black text-center mt-10'>Atomic Trade checker</h1>
+      <p className='text-xs mb-2 text-center'>The website is still in development, be sure to always double check a trade yourself!</p>
 
-      <p className='mt-5'>How to get trade id? Go to the trade page and look in the URL</p>
-      <img src="./trade_id.png" alt="a good tutorial" className='mx-auto' />
+      <div className='p-5 max-w-4xl mx-auto mt-12 bg-[#121212] rounded-xl'>
+        <div className='flex'>
+          <input type="text" onChange={(e) => setOfferId(e.target.value)} className="bg-black grow p-2 rounded-l-xl" placeholder='TRADE ID' />
+          <button onClick={() => getOffer(offerId)} className="p-2 bg-[#ff9000] animate-pulse text-black rounded-r-xl font-bold">Check</button>
+        </div>
 
-      <div className='mt-20'>
-        {data && (
-          <div className='flex gap-8 justify-center'>
-            {data.map((user, i) => (
-              <div key={i}>
-                <h2 className='text-2xl'>{user.wallet}</h2>
-                <p className='text-xl'>Total value: {(user.total).toFixed(2)} WAX</p>
-                <div className='flex flex-col gap-3'>
-                  {user.assets.map((asset, index) => (
-                    <div className='flex items-center gap-2 bg-[#434C5E] text-[#ECEFF4] rounded-md overflow-hidden'>
-                      {asset.type === 'image' ? (
-                        <>
-                          <img src={asset.ipfs} alt="asset" key={index} className='w-16 h-16 p-2 object-cover' />
-                        </>
-                      ) : (
-                        <video src={asset.ipfs} key={index} className='w-16 h-16 p-2' autoPlay muted />
-                      )}
-                      <p>{(asset.price).toFixed(2)} WAX</p>
+        <div className='mt-12 flex flex-col gap-3'>
+          <Collapsible label="How do I get the trade id?">
+            <p>Go to the page of the trade and you will see the ID in the link upper corner</p>
+            <img src="./trade_id.png" alt="a good tutorial" />
+          </Collapsible>
+
+          <Collapsible label="Who made this beatiful website?">
+            <p>I did!</p>
+          </Collapsible>
+        </div>
+        
+        { data && (
+          <div className='mt-20'>
+            {data && (
+              <div className='flex gap-8 justify-center'>
+                {data.map((user, i) => (
+                  <div key={i}>
+                    <h2 className='text-2xl'>{user.wallet}</h2>
+                    <p className='text-xl'>Total value: {(user.total).toFixed(2)} WAX</p>
+                    <div className='flex flex-col gap-3'>
+                      {user.assets.map((asset, index) => (
+                        <div className='flex items-center gap-2 bg-[#434C5E] text-[#ECEFF4] rounded-md overflow-hidden'>
+                          {asset.type === 'image' ? (
+                            <>
+                              <img src={asset.ipfs} alt="asset" key={index} className='w-16 h-16 p-2 object-cover' />
+                            </>
+                          ) : (
+                            <video src={asset.ipfs} key={index} className='w-16 h-16 p-2' autoPlay muted />
+                          )}
+                          <p>{(asset.price).toFixed(2)} WAX</p>
+                        </div>
+                      ))}
                     </div>
-                  ))}
-                </div>
+                  </div>
+                ))}
               </div>
-            ))}
+            )}
           </div>
         )}
+        
       </div>
-    </>
+    </div>
   );
 }
 

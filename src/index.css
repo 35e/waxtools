@@ -1,3 +1,20 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+body {
+  @apply bg-black text-white font-poppins
+}
+
+.content {
+  @apply p-5
+}
+
+/* Collapsible */
+.collapsible .collapsible-parent {
+  @apply max-h-0 overflow-hidden transition-all duration-500 ease-in-out;
+}
+
+.collapsible-content {
+  @apply mt-2 text-gray-400;
+}
