@@ -20,7 +20,7 @@ body {
 }
 
 .collapsible-label::after {
-  content: url('/chavron.svg');
+  content: url('/svg/chavron.svg');
   fill: white;
   @apply float-right w-[15px] h-[15px] text-white rotate-180 transition-transform duration-500;
 }

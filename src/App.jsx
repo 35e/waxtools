@@ -78,11 +78,6 @@ function App() {
             <img src="./trade_tut.png" alt="a good tutorial" />
           </Collapsible>
 
-          <Collapsible label="Who made this beatiful website?">
-            <p>Discord: Spezi#2220</p>
-            <p>If you have any questions, feel free to send me a message.</p>
-          </Collapsible>
-
           <Collapsible label="Why is my trade not showing up?">
             <p>The website is still in early development. So there might be some errors.</p>
           </Collapsible>
@@ -125,6 +120,10 @@ function App() {
           )}
         </div>
       )}
+
+      <footer className='text-center mt-5 text-sm'>
+        <p className='flex justify-center items-center'>Made with<img className='w-[20px] h-[20px] mx-1' src='/svg/heart.svg' />by Spezi#2220</p>
+      </footer>
     </div>
   );
 }
