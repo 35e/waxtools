@@ -61,7 +61,7 @@ function App() {
 
   return (
     <div className='content'>
-      <h1 className='text-5xl font-black text-center mt-10'>Atomic Trade checker</h1>
+      <h1 className='text-2xl md:text-5xl font-black text-center mt-10'>Atomic Trade checker</h1>
       <p className='text-xs mb-2 text-center'>The website is still in development, be sure to always double check a trade yourself!</p>
 
       <div className='p-5 max-w-4xl mx-auto mt-12 bg-[#121212] rounded-xl'>
@@ -70,14 +70,19 @@ function App() {
           <button onClick={() => getOffer(offerId)} className="p-2 bg-[#ff9000] animate-pulse text-black rounded-r-xl font-bold">Check</button>
         </div>
 
-        <div className='mt-12 flex flex-col gap-3'>
+        <div className='mt-6 flex flex-col gap-3'>
           <Collapsible label="How do I get the trade id?">
             <p>Go to the page of the trade and you will see the ID in the link upper corner</p>
-            <img src="./trade_id.png" alt="a good tutorial" />
+            <img src="./trade_tut.png" alt="a good tutorial" />
           </Collapsible>
 
           <Collapsible label="Who made this beatiful website?">
-            <p>I did!</p>
+            <p>Discord: Spezi#2220</p>
+            <p>If you have any questions, feel free to send me a message.</p>
+          </Collapsible>
+
+          <Collapsible label="It doesn't even work...">
+            <p>The website is still in early development. So there might be some errors.</p>
           </Collapsible>
         </div>
         
