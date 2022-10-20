@@ -43,23 +43,8 @@ a {
 
 .check-btn {
   @apply transition-colors duration-300 ease-in-out;
-  animation: pulse-r 3s infinite;
 }
 
 .check-btn:hover {
   @apply bg-blue-600;
-}
-
-@keyframes pulse-r {
-  0% {
-    box-shadow: 0 0 0 0 rgba(52, 172, 224, 0.7);
-  }
-  
-  70% {
-    box-shadow: 0 0 0 7px rgba(52, 172, 224, 0);
-  }
-  
-  100% {
-    box-shadow: 0 0 0 0 rgba(52, 172, 224, 0);
-  }
 }
