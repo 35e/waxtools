@@ -14,7 +14,12 @@ export default function Home() {
           <p className='text-gray-400 mt-2'>Trade safely. See the current values of the NFTs in a trade. And detect BACKED token scams.</p>
         </Link>
 
-        <div className='bg-[#080808] rounded-md p-4 grid place-items-center'>
+        <Link to="taco" className='bg-[#121212] rounded-md p-4 hover:bg-gray-900 transition-color duration-100 ease-in-out'>
+          <div className='text-xl'>Taco Logwork</div>
+          <p className='text-gray-400 mt-2'>...</p>
+        </Link>
+
+        <div className='bg-[#080808] col-span-2 rounded-md p-4 grid place-items-center'>
           <div className='text-xl text-gray-500'>More coming soon...</div>
         </div>
       </div>
