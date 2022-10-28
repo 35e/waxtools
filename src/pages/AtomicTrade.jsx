@@ -66,7 +66,7 @@ function AtomicTrade() {
       {data && (
         <div className='max-w-4xl mx-auto mt-6 bg-[#121212] rounded-xl overflow-hidden'>
           <div className='px-5 py-4 bg-[#0e0e0e]'>
-            <h2 className='font-bold text-xl'>Trade <a href={`https://wax.atomichub.io/trading/trade-offers#tradeoffers-${data.offer_id}`} target="_blank">#{data.offer_id}</a></h2>
+            <h2 className='font-bold text-xl'>Trade <a href={`https://wax.atomichub.io/trading/trade-offer/${data.offer_id}`} target="_blank">#{data.offer_id}</a></h2>
           </div>
 
           <div className='grid grid-cols-1 md:grid-cols-2 gap-4 p-5'>
