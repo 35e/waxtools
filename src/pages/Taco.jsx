@@ -24,9 +24,9 @@ export default function Taco() {
         </div>
 
         <div className='mt-12'>
-          { data && data.actions.map((action, index) => (
+          {data && data.actions.map((action, index) => (
             <div key={index}>
-              <p>{ action.act.data.user } | <a href={`https://wax.bloks.io/transaction/${action.trx_id}`} target="_blank">trx</a></p>
+              <p>{action.act.data.user} | <a href={`https://wax.bloks.io/transaction/${action.trx_id}`} target="_blank">trx</a></p>
             </div>
           ))}
         </div>

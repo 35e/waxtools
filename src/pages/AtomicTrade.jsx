@@ -18,7 +18,7 @@ function AtomicTrade() {
   ]
 
   const [node, setNode] = useState(atomicNodes[0])
-  
+
   const priceLink = `https://${node}/atomicmarket/v2/sales?limit=1&order=asc&sort=price&state=1&template_id=`
   const ipfsLink = 'https://ipfs.hivebp.io/ipfs/'
 
@@ -28,45 +28,13 @@ function AtomicTrade() {
 
     const sender = {
       wallet: res.sender_name,
-      assets: res.sender_assets.map(asset => {
-        return {
-          asset_id: asset.asset_id,
-          template_id: asset.template.template_id,
-          name: asset.data.name,
-          price: asset.backed_tokens[0]?.amount / 100000000,
-          ipfs: asset.data.img ? ipfsLink + asset.data.img : ipfsLink + asset.data.video,
-          type: asset.data.img ? 'image' : 'video'
-        }
-      })
+      assets: res.sender_assets
     }
 
     const receiver = {
       wallet: res.recipient_name,
-      assets: res.recipient_assets.map(asset => {
-        return {
-          asset_id: asset.asset_id,
-          template_id: asset.template.template_id,
-          name: asset.data.name,
-          price: asset.backed_tokens[0]?.amount / 100000000,
-          ipfs: asset.data.img ? ipfsLink + asset.data.img : ipfsLink + asset.data.video,
-          type: asset.data.img ? 'image' : 'video'
-        }
-      })
+      assets: res.recipient_assets
     }
-
-    // Loop through all assets
-    const allAssets = sender.assets.concat(receiver.assets)
-
-    for (const asset of allAssets) {
-      const data = (await (await fetch(priceLink + asset.template_id)).json()).data[0]
-      if (data && ((data.listing_price / 100000000) > asset.price || isNaN(asset.price))) {
-        asset.price = data.listing_price / 100000000
-      }
-    }
-
-    // Loop through all assets and calculate total price
-    sender.total = sender.assets.reduce((a, b) => a + b.price, 0)
-    receiver.total = receiver.assets.reduce((a, b) => a + b.price, 0)
 
     setData({ offer_id: res.offer_id, parties: [sender, receiver] })
     setLoading(false)
@@ -96,39 +64,43 @@ function AtomicTrade() {
       </div>
 
       {data && (
-        <div className='p-5 max-w-4xl mx-auto mt-6 bg-[#121212] rounded-xl'>
-          <h2 className='font-bold text-xl'>Trade <a href={`https://wax.atomichub.io/trading/trade-offers#tradeoffers-${data.offer_id}`} target="_blank">#{data.offer_id}</a></h2>
-          {data && (
-            <div>
-              <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
-                {data.parties.map((user, i) => (
-                  <div key={i} className="w-full mt-4">
-                    <p>Wallet: <a href={`https://wax.atomichub.io/profile/${user.wallet}`} target="_blank">{user.wallet}</a></p>
-                    <p>Total value: {(user.total).toFixed(2)} WAX</p>
-                    <div className='flex flex-col gap-2 mt-4'>
-                      {user.assets.map((asset, index) => (
-                        <a key={index} href={`https://wax.atomichub.io/explorer/asset/${asset.asset_id}`} target="_blank" className='bg-black text-white hover:bg-gray-900 rounded-md transition-color duration-100 ease-in-out'>
-                          <div className='flex items-center gap-2 overflow-hidden text-sm'>
-                            {asset.type === 'image' ? (
-                              <>
-                                <img src={asset.ipfs} alt="asset" key={index} className='w-16 h-16 p-2 object-cover' />
-                              </>
-                            ) : (
-                              <video src={asset.ipfs} key={index} className='w-16 h-16 p-2' autoPlay muted loop />
-                            )}
-                            <div>
-                              <p>{asset.name}</p>
-                              <p>{(asset.price).toFixed(2)} WAX</p>
-                            </div>
+        <div className='max-w-4xl mx-auto mt-6 bg-[#121212] rounded-xl overflow-hidden'>
+          <div className='px-5 py-4 bg-[#0e0e0e]'>
+            <h2 className='font-bold text-xl'>Trade <a href={`https://wax.atomichub.io/trading/trade-offers#tradeoffers-${data.offer_id}`} target="_blank">#{data.offer_id}</a></h2>
+          </div>
+
+          <div className='grid grid-cols-1 md:grid-cols-2 gap-4 p-5'>
+            {data.parties.map((user, i) => (
+              <div key={i} className="w-full">
+                <p>Wallet: <a href={`https://wax.atomichub.io/profile/${user.wallet}`} target="_blank">{user.wallet}</a></p>
+                {/* <p>Total value: {(user.total).toFixed(2)} WAX</p> */}
+                <div className='flex flex-col gap-2 mt-4'>
+                  {user.assets.map((asset, index) => (
+                    <a key={index} href={`https://wax.atomichub.io/explorer/asset/${asset.asset_id}`} target="_blank" className='bg-black text-white hover:bg-gray-900 rounded-md transition-color duration-100 ease-in-out'>
+                      <div className='flex items-center gap-2 overflow-hidden text-sm'>
+                        {asset.data.img ? (
+                          <>
+                            <img src={ipfsLink + asset.data.img} alt="asset" key={index} className='w-16 h-16 p-2 object-cover' />
+                          </>
+                        ) : (
+                          <video src={ipfsLink + asset.data.video} key={index} className='w-16 h-16 p-2' autoPlay muted loop />
+                        )}
+                        <div>
+                          <div className='flex gap-2'>
+                            <p>[{asset.collection.collection_name}]</p>
+                            {asset.backed_tokens.map((token, index) => (
+                              <p key={index} className='bg-blue-500 inline-block py-[2px] px-[4px] rounded-md text-xs'>{(token.amount / 100000000)} {token.token_symbol}</p>
+                            ))}
                           </div>
-                        </a>
-                      ))}
-                    </div>
-                  </div>
-                ))}
+                          <p>{asset.name}</p>
+                        </div>
+                      </div>
+                    </a>
+                  ))}
+                </div>
               </div>
-            </div>
-          )}
+            ))}
+          </div>
         </div>
       )}
 
