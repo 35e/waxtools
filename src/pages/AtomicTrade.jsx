@@ -43,7 +43,7 @@ function AtomicTrade() {
   return (
     <div className='content'>
       <h1 className='text-2xl md:text-5xl font-black text-center mt-10'>Atomic Trade Checker</h1>
-      <p className='text-xs mb-2 text-center'>The website is still in development, be sure to always double check a trade yourself!</p>
+      <p className='text-xs mb-2 text-center'>Quickly check the amount of backed tokens in a trade.</p>
 
       <div className='p-5 max-w-4xl mx-auto mt-12 bg-[#121212] rounded-xl'>
         <div className='grid grid-cols-1 md:grid-cols-3'>
