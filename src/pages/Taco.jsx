@@ -1,13 +1,13 @@
 import { useState } from 'react'
-import axios from 'axios'
+import dayjs from 'dayjs'
 
 export default function Taco() {
   const [wallet, setWallet] = useState('')
-  const logWorkLink = `https://api.waxsweden.org/v2/history/get_actions?account=${wallet}&filter=*%3Alogwork&skip=0&limit=100&sort=desc`
+  const logWorkLink = `https://wax.eosphere.io/v2/history/get_actions?account=${wallet}&limit=100&sort=desc&skip=0&filter=*:logwork`
   const venuesLink = `https://wax.greymass.com/v1/chain/get_table_rows`
 
-  const [venues, setVenues] = useState([])
-  const [data, setData] = useState()
+  const [venues, setVenues] = useState()
+  const [transactions, setTransactions] = useState()
 
   const getVenues = async () => {
     const response = await fetch(venuesLink, {
@@ -28,23 +28,29 @@ export default function Taco() {
     })
 
     let data = (await response.json()).rows.filter((venue) => venue.level >= 100)
-    // console.log(data)
 
-    // data.forEach(async (venue) => {
-    for (let i = 0; i < data.length; i++) {
-      // console.log(venue)
-      const image = await fetch('https://wax.api.atomicassets.io/atomicmarket/v1/assets/' + data[i].asset_id)
-      data[i].img = 'https://ipfs.hivebp.io/ipfs/' + (await image.json()).data.mutable_data.img
+    for (const venue of data) {
+      const image = await fetch('https://wax.api.atomicassets.io/atomicmarket/v1/assets/' + venue.asset_id)
+      venue.img = 'https://ipfs.hivebp.io/ipfs/' + (await image.json()).data.mutable_data.img
     };
+
+    console.log(data)
 
     setVenues(await data.filter((venue) => venue.level >= 100))
   }
 
-  // const getActions = async () => {
-  //   const { data: data } = await fetch(link);
-  //   console.log(data)
-  //   setData(data);
-  // }
+  const getLogWork = async () => {
+    const response = await fetch(logWorkLink)
+    const data = (await response.json()).actions
+    console.log(data)
+
+    setTransactions(data)
+  }
+
+  const getData = async () => {
+    await getVenues()
+    await getLogWork()
+  }
 
   return (
     <div className='max-w-5xl mx-auto p-5'>
@@ -54,27 +60,57 @@ export default function Taco() {
       <div className='p-5 max-w-4xl mx-auto mt-12 bg-[#121212] rounded-xl'>
         <div className='grid grid-cols-1 md:grid-cols-3'>
           <input type="text" onChange={(e) => setWallet(e.target.value)} className="bg-black md:col-span-2 p-2 rounded-t-xl rounded-b-none md:rounded-l-xl md:rounded-r-none" placeholder='Wallet' />
-          <button onClick={() => getVenues()} className="p-2 bg-blue-500 text-black rounded-t-none rounded-b-xl md:rounded-r-xl md:rounded-l-none font-bold check-btn">Check</button>
+          <button onClick={() => getData()} className="p-2 bg-blue-500 text-black rounded-t-none rounded-b-xl md:rounded-r-xl md:rounded-l-none font-bold check-btn">Check</button>
         </div>
 
-        <div className='mt-12'>
-          {venues.length > 0 && (
-            <>
-              <h2 className='text-2xl font-bold'>Venues</h2>
-              {venues.map((venue, index) => (
-                <div className='mt-5' key={index} >
-                  <p>{venue.custom_name}</p>
-                  <img src={venue.img} alt="venue" width={150} height={150} />
+        {venues && (
+          <div className='mt-8'>
+            {venues.length > 0 && (
+              <>
+                <h2 className='text-2xl font-bold'>Venues</h2>
+                {venues.map((venue, index) => (
+                  <div className='mt-2 flex items-center gap-4' key={index} >
+                    <img src={venue.img} alt="venue" width={75} height={75} />
+                    <div>
+                      <p>Name: {venue.custom_name}</p>
+                      <p>Level: {venue.level}</p>
+                    </div>
+                  </div>
+                ))}
+              </>
+            )}
+          </div>
+        )}
+
+        {transactions && (
+          <div class="flex flex-col">
+            <h2 className='mt-6 text-2xl font-bold'>Logwork</h2>
+            <div class="overflow-x-auto mt-4">
+              <div class="inline-block min-w-full align-middle">
+                <div class="overflow-hidden shadow ring-1 ring-black ring-opacity-5 md:rounded-lg">
+                  <table class="min-w-full">
+                    <thead class="bg-black text-white">
+                      <tr>
+                        <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold sm:pl-6">Wallet</th>
+                        <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold">Trx</th>
+                        <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold">Date</th>
+                      </tr>
+                    </thead>
+                    <tbody class="bg-[#0a0a0a]">
+                      {transactions.map((action, index) => (
+                        <tr key={index}>
+                          <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium sm:pl-6">{action.act.data.user}</td>
+                          <td class="whitespace-nowrap px-3 py-4 text-sm"><a href={`https://waxblock.io/transaction/${action.trx_id}`}>Link to waxblock</a></td>
+                          <td class="whitespace-nowrap px-3 py-4 text-sm">{dayjs(action.timestamp).format('DD MMM - HH:mm')}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
                 </div>
-              ))}
-            </>
-          )}
-          {data && data.actions.map((action, index) => (
-            <div key={index}>
-              <p>{action.act.data.user} | <a href={`https://waxblock.io/transaction/${action.trx_id}`} target="_blank">trx</a></p>
+              </div>
             </div>
-          ))}
-        </div>
+          </div>
+        )}
       </div>
     </div >
   )
