@@ -91,7 +91,7 @@ export default function Taco() {
         {transactions && (
           <div className="flex flex-col">
             <h2 className='mt-6 text-2xl font-bold'>Logwork</h2>
-            <div className="mt-3 overflow-auto shadow md:rounded-lg max-h-[300px]">
+            <div className="mt-3 overflow-auto shadow md:rounded-lg max-h-[500px]">
               <table className="w-full">
                 <thead className="bg-black text-white sticky top-0">
                   <tr className=''>
