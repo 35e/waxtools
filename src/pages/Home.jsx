@@ -11,12 +11,12 @@ export default function Home() {
       <div className='grid grid-cols-1 md:grid-cols-2 mt-12 gap-6'>
         <Link to="atomic" className='bg-[#121212] rounded-md p-4 hover:bg-gray-900 transition-color duration-100 ease-in-out'>
           <div className='text-xl'>AtomicHub Trade Checker</div>
-          <p className='text-gray-400 mt-2'>Trade safely. See the current values of the NFTs in a trade. And detect BACKED token scams.</p>
+          <p className='text-gray-400 mt-2'>Check the amount of backed tokens on NFTs in a trade.</p>
         </Link>
 
         <Link to="taco" className='bg-[#121212] rounded-md p-4 hover:bg-gray-900 transition-color duration-100 ease-in-out'>
-          <div className='text-xl'>Taco Logwork</div>
-          <p className='text-gray-400 mt-2'>W.I.P.</p>
+          <div className='text-xl'>Taco Logwork <span className='bg-orange-500 py-[2px] px-[4px] text-white font-bold rounded-md text-xs float-right'>W.I.P.</span></div>
+          <p className='text-gray-400 mt-2'>Check logworks of your venue.</p>
         </Link>
 
         <div className='bg-[#080808] col-span-1 md:col-span-2 rounded-md p-4 grid place-items-center'>
