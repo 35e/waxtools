@@ -1,13 +1,16 @@
 import { useState } from 'react'
 import dayjs from 'dayjs'
+import ReactPaginate from 'react-paginate'
 
 export default function Taco() {
   const [wallet, setWallet] = useState('')
-  const logWorkLink = `https://wax.eosphere.io/v2/history/get_actions?account=${wallet}&limit=100&sort=desc&skip=0&filter=*:logwork`
+  const logWorkLink = `https://wax.eosphere.io/v2/history/get_actions?account=${wallet}&limit=100&sort=desc&filter=*:logwork&skip=`
   const venuesLink = `https://wax.greymass.com/v1/chain/get_table_rows`
 
   const [venues, setVenues] = useState()
   const [transactions, setTransactions] = useState()
+
+  const [pageCount, setPageCount] = useState(0)
 
   const getVenues = async () => {
     const response = await fetch(venuesLink, {
@@ -34,22 +37,25 @@ export default function Taco() {
       venue.img = 'https://ipfs.hivebp.io/ipfs/' + (await image.json()).data.mutable_data.img
     };
 
-    console.log(data)
-
     setVenues(await data.filter((venue) => venue.level >= 100))
   }
 
-  const getLogWork = async () => {
-    const response = await fetch(logWorkLink)
-    const data = (await response.json()).actions
-    console.log(data)
-
-    setTransactions(data)
+  const getLogWork = async (skip = 0) => {
+    const response = await fetch(logWorkLink + skip)
+    const data = (await response.json())
+    setPageCount(data.total.value / 100)
+    setTransactions(data.actions)
   }
 
   const getData = async () => {
     await getVenues()
     await getLogWork()
+  }
+
+  const handlePageClick = async (data) => {
+    const skip = data.selected * 100
+    await getLogWork(skip)
+    console.log(skip)
   }
 
   return (
@@ -59,7 +65,7 @@ export default function Taco() {
 
       <div className='p-5 max-w-4xl mx-auto mt-12 bg-[#121212] rounded-xl'>
         <div className='grid grid-cols-1 md:grid-cols-3'>
-          <input type="text" onChange={(e) => setWallet(e.target.value)} className="bg-black md:col-span-2 p-2 rounded-t-xl rounded-b-none md:rounded-l-xl md:rounded-r-none" placeholder='Wallet' />
+          <input type="text" onChange={(e) => setWallet(e.target.value)} className="bg-black md:col-span-2 p-2 rounded-t-xl rounded-b-none md:rounded-l-xl md:rounded-r-none" placeholder='Venue owner wallet' />
           <button onClick={() => getData()} className="p-2 bg-blue-500 text-black rounded-t-none rounded-b-xl md:rounded-r-xl md:rounded-l-none font-bold check-btn">Check</button>
         </div>
 
@@ -83,32 +89,46 @@ export default function Taco() {
         )}
 
         {transactions && (
-          <div class="flex flex-col">
+          <div className="flex flex-col">
             <h2 className='mt-6 text-2xl font-bold'>Logwork</h2>
-            <div class="overflow-x-auto mt-4">
-              <div class="inline-block min-w-full align-middle">
-                <div class="overflow-hidden shadow ring-1 ring-black ring-opacity-5 md:rounded-lg">
-                  <table class="min-w-full">
-                    <thead class="bg-black text-white">
-                      <tr>
-                        <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold sm:pl-6">Wallet</th>
-                        <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold">Trx</th>
-                        <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold">Date</th>
-                      </tr>
-                    </thead>
-                    <tbody class="bg-[#0a0a0a]">
-                      {transactions.map((action, index) => (
-                        <tr key={index}>
-                          <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium sm:pl-6">{action.act.data.user}</td>
-                          <td class="whitespace-nowrap px-3 py-4 text-sm"><a href={`https://waxblock.io/transaction/${action.trx_id}`}>Link to waxblock</a></td>
-                          <td class="whitespace-nowrap px-3 py-4 text-sm">{dayjs(action.timestamp).format('DD MMM - HH:mm')}</td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-              </div>
+            <div className="mt-3 overflow-auto shadow md:rounded-lg max-h-[300px]">
+              <table className="w-full">
+                <thead className="bg-black text-white sticky top-0">
+                  <tr className=''>
+                    <th className="py-3.5 pl-4 pr-3 text-left text-sm font-semibold sm:pl-6">Wallet</th>
+                    <th className="py-3.5 pl-4 pr-3 text-left text-sm font-semibold sm:pl-6">Action</th>
+                    <th className="px-3 py-3.5 text-left text-sm font-semibold">Trx</th>
+                    <th className="px-3 py-3.5 text-left text-sm font-semibold">Date</th>
+                  </tr>
+                </thead>
+                <tbody className="bg-[#0a0a0a]">
+                  {transactions.map((action, index) => (
+                    <tr key={index}>
+                      <td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium sm:pl-6">{action.act.data.user}</td>
+                      <td className="whitespace-nowrap py-4 pl-4 pr-3 text-xs font-medium sm:pl-6">
+                        <span className='bg-blue-500 py-[2px] px-[4px] rounded-md text-xs'>{action.act.account}</span> <span className='bg-blue-500 py-[2px] px-[4px] rounded-md text-xs'>{action.act.name}</span>
+                      </td>
+                      <td className="whitespace-nowrap px-3 py-4 text-sm"><a href={`https://waxblock.io/transaction/${action.trx_id}`} target="_blank">Explore</a></td>
+                      <td className="whitespace-nowrap px-3 py-4 text-sm">{dayjs(action.timestamp).format('DD MMM - HH:mm')}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
             </div>
+            <ReactPaginate
+              previousLabel={'<<'}
+              pageCount={pageCount}
+              nextLabel={'>>'}
+              marginPagesDisplayed={1}
+              pageRangeDisplayed={3}
+              onPageChange={handlePageClick}
+              renderOnZeroPageCount={null}
+              containerClassName={'flex justify-center mt-4'}
+              pageLinkClassName={'p-2 text-white'}
+              activeClassName={'bg-blue-500 font-bold rounded-full'}
+              previousClassName={'mr-2'}
+              nextClassName={'ml-2'}
+            />
           </div>
         )}
       </div>
