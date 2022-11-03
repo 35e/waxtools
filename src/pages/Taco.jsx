@@ -1,16 +1,25 @@
 import { useState } from 'react'
 import dayjs from 'dayjs'
+import utc from 'dayjs/plugin/utc'
+import timezone from 'dayjs/plugin/timezone'
 import ReactPaginate from 'react-paginate'
+
+dayjs.extend(utc)
+dayjs.extend(timezone)
 
 export default function Taco() {
   const [wallet, setWallet] = useState('')
-  const logWorkLink = `https://wax.eosphere.io/v2/history/get_actions?account=${wallet}&limit=100&sort=desc&filter=*:logwork&skip=`
-  const venuesLink = `https://wax.greymass.com/v1/chain/get_table_rows`
+  const [venues, setVenues] = useState([])
+  const [transactions, setTransactions] = useState([])
 
-  const [venues, setVenues] = useState()
-  const [transactions, setTransactions] = useState()
+  // Filter
+  const [skip, setSkip] = useState(0)
+  const [limit, setLimit] = useState(100)
+  const [date, setDate] = useState(dayjs().format('YYYY-MM-DD'))
 
   const [pageCount, setPageCount] = useState(0)
+  const logWorkLink = `https://wax.eosphere.io/v2/history/get_actions?account=${wallet}&limit=${limit}&sort=desc&filter=*:logwork&skip=${skip}`
+  const venuesLink = `https://wax.greymass.com/v1/chain/get_table_rows`
 
   const getVenues = async () => {
     const response = await fetch(venuesLink, {
@@ -68,8 +77,7 @@ export default function Taco() {
           <input type="text" onChange={(e) => setWallet(e.target.value)} className="bg-black md:col-span-2 p-2 rounded-t-xl rounded-b-none md:rounded-l-xl md:rounded-r-none" placeholder='Venue owner wallet' />
           <button onClick={() => getData()} className="p-2 bg-blue-500 text-black rounded-t-none rounded-b-xl md:rounded-r-xl md:rounded-l-none font-bold check-btn">Check</button>
         </div>
-
-        {venues && (
+        {venues.length > 0 && (
           <div className='mt-8'>
             {venues.length > 0 && (
               <>
@@ -88,7 +96,7 @@ export default function Taco() {
           </div>
         )}
 
-        {transactions && (
+        {transactions.length > 0 && (
           <div className="flex flex-col">
             <h2 className='mt-6 text-2xl font-bold'>Logwork</h2>
             <div className="mt-3 overflow-auto shadow md:rounded-lg max-h-[500px]">
@@ -108,8 +116,10 @@ export default function Taco() {
                       <td className="whitespace-nowrap py-4 pl-4 pr-3 text-xs font-medium sm:pl-6">
                         <span className='bg-blue-500 py-[2px] px-[4px] rounded-md text-xs'>{action.act.account}</span> <span className='bg-blue-500 py-[2px] px-[4px] rounded-md text-xs'>{action.act.name}</span>
                       </td>
-                      <td className="whitespace-nowrap px-3 py-4 text-sm"><a href={`https://waxblock.io/transaction/${action.trx_id}`} target="_blank">Explore</a></td>
-                      <td className="whitespace-nowrap px-3 py-4 text-sm">{dayjs(action.timestamp).format('DD MMM - HH:mm')}</td>
+                      <td className="whitespace-nowrap px-3 py-4 text-sm">
+                        <a className='flex gap-2' href={`https://waxblock.io/transaction/${action.trx_id}`} target="_blank"><img src='/svg/link.svg' width={15} height={15} />{action.trx_id.slice(0, 8)}</a>
+                      </td>
+                      <td className="whitespace-nowrap px-3 py-4 text-sm">{dayjs(action.timestamp).tz(dayjs.tz.guess()).format('DD MMM \'YY, HH:mm:ss')}</td>
                     </tr>
                   ))}
                 </tbody>
