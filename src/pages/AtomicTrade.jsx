@@ -75,7 +75,7 @@ function AtomicTrade() {
                 <p>Wallet: <a href={`https://wax.atomichub.io/profile/${user.wallet}`} target="_blank">{user.wallet}</a></p>
                 {/* <p>Total value: {(user.total).toFixed(2)} WAX</p> */}
                 <div className='flex flex-col gap-2 mt-4'>
-                  {user.assets.map((asset, index) => (
+                  {user.assets.length > 0 ? user.assets.map((asset, index) => (
                     <a key={index} href={`https://wax.atomichub.io/explorer/asset/${asset.asset_id}`} target="_blank" className='bg-black text-white hover:bg-gray-900 rounded-md transition-color duration-100 ease-in-out'>
                       <div className='flex items-center gap-2 overflow-hidden text-sm'>
                         {asset.data.img ? (
@@ -96,7 +96,7 @@ function AtomicTrade() {
                         </div>
                       </div>
                     </a>
-                  ))}
+                  )) : (<div className='w-full bg-black h-[64px] text-gray-400 rounded-md grid place-items-center'>No assets</div>)}
                 </div>
               </div>
             ))}
