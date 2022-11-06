@@ -17,8 +17,9 @@ export default function Taco() {
   const [limit, setLimit] = useState(100)
   const [date, setDate] = useState(dayjs().format('YYYY-MM-DD'))
 
-  const [pageCount, setPageCount] = useState(0)
-  const logWorkLink = `https://wax.eosphere.io/v2/history/get_actions?account=${wallet}&limit=${limit}&sort=desc&filter=*:logwork&skip=${skip}`
+  const [filterWallet, setFilterWallet] = useState('')
+
+  const logWorkLink = `https://wax.eosphere.io/v2/history/get_actions?account=${wallet}&limit=${limit}&sort=desc&filter=*:logwork&skip=`
   const venuesLink = `https://wax.greymass.com/v1/chain/get_table_rows`
 
   const getVenues = async () => {
@@ -52,19 +53,20 @@ export default function Taco() {
   const getLogWork = async (skip = 0) => {
     const response = await fetch(logWorkLink + skip)
     const data = (await response.json())
-    setPageCount(data.total.value / 100)
-    setTransactions(data.actions)
+    setSkip(skip + limit)
+    return data.actions
   }
 
   const getData = async () => {
+    setSkip(0)
     await getVenues()
-    await getLogWork()
+    const trx = await getLogWork()
+    setTransactions(trx)
   }
 
-  const handlePageClick = async (data) => {
-    const skip = data.selected * 100
-    await getLogWork(skip)
-    console.log(skip)
+  const loadMore = async () => {
+    const trx = await getLogWork(skip)
+    setTransactions([...transactions, ...trx])
   }
 
   return (
@@ -98,7 +100,12 @@ export default function Taco() {
 
         {transactions.length > 0 && (
           <div className="flex flex-col">
-            <h2 className='mt-6 text-2xl font-bold'>Logwork</h2>
+            <div className='flex mt-6 items-center justify-between'>
+              <h2 className='text-2xl font-bold'>Logwork</h2>
+              <div>
+                <input className='bg-black rounded-md p-2' type="text" placeholder='Wallet filter' onChange={(e) => setFilterWallet(e.target.value)} />
+              </div>
+            </div>
             <div className="mt-3 overflow-auto shadow md:rounded-lg max-h-[500px]">
               <table className="w-full">
                 <thead className="bg-black text-white sticky top-0">
@@ -110,7 +117,7 @@ export default function Taco() {
                   </tr>
                 </thead>
                 <tbody className="bg-[#0a0a0a]">
-                  {transactions.map((action, index) => (
+                  {transactions.filter((action) => action.act.data.user.includes(filterWallet)).map((action, index) => (
                     <tr key={index}>
                       <td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium sm:pl-6">{action.act.data.user}</td>
                       <td className="whitespace-nowrap py-4 pl-4 pr-3 text-xs font-medium sm:pl-6">
@@ -125,20 +132,9 @@ export default function Taco() {
                 </tbody>
               </table>
             </div>
-            <ReactPaginate
-              previousLabel={'<<'}
-              pageCount={pageCount}
-              nextLabel={'>>'}
-              marginPagesDisplayed={1}
-              pageRangeDisplayed={3}
-              onPageChange={handlePageClick}
-              renderOnZeroPageCount={null}
-              containerClassName={'flex justify-center mt-4'}
-              pageLinkClassName={'p-2 text-white'}
-              activeClassName={'bg-blue-500 font-bold rounded-full'}
-              previousClassName={'mr-2'}
-              nextClassName={'ml-2'}
-            />
+            <div className='text-center mt-2'>
+              <div className='bg-blue-500 p-2 inline-block rounded-md cursor-pointer hover:bg-blue-600 transition-colors' onClick={() => loadMore()}>Load more</div>
+            </div>
           </div>
         )}
       </div>
