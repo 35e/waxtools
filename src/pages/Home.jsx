@@ -9,6 +9,11 @@ export default function Home() {
       <p className='text-xs mb-2 text-center'>This website is still in development</p>
 
       <div className='grid grid-cols-1 md:grid-cols-2 mt-12 gap-6'>
+        <Link to="eos" className='bg-[#121212] rounded-md p-4 hover:bg-gray-900 transition-color duration-100 ease-in-out'>
+          <div className='text-xl'>EOS Keypair</div>
+          <p className='text-gray-400 mt-2'>Generate EOS private & public keys</p>
+        </Link>
+
         <Link to="atomic" className='bg-[#121212] rounded-md p-4 hover:bg-gray-900 transition-color duration-100 ease-in-out'>
           <div className='text-xl'>AtomicHub Trade Checker</div>
           <p className='text-gray-400 mt-2'>Check the amount of backed tokens on NFTs in a trade.</p>

@@ -138,6 +138,6 @@ export default function Taco() {
           </div>
         )}
       </div>
-    </div >
+    </div>
   )
 }
