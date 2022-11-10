@@ -1,7 +1,8 @@
 import { useState } from 'react';
-import './eos.js'
+import useScript from '../hooks/useScript.jsx';
 
 export default function Wallet() {
+  useScript('/js/eos.js')
   const [keys, setKeys] = useState()
 
   const generateKeyPair = async () => {
