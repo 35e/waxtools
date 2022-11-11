@@ -10,7 +10,7 @@ export default function Home() {
 
       <div className='grid grid-cols-1 md:grid-cols-2 mt-12 gap-6'>
         <Link to="price" className='bg-[#121212] rounded-md p-4 hover:bg-gray-900 transition-color duration-100 ease-in-out'>
-          <div className='text-xl'>WAX Price</div>
+          <div className='text-xl'>WAX Price <span className='bg-orange-500 py-[2px] px-[4px] text-white font-bold rounded-md text-xs float-right'>W.I.P.</span></div>
           <p className='text-gray-400 mt-2'>See the actual price of WAX</p>
         </Link>
 
