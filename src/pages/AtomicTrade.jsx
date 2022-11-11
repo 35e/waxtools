@@ -56,10 +56,6 @@ function AtomicTrade() {
             <p>Go to the page of the trade and you will see the ID in the left upper corner</p>
             <img src="./trade_tut.png" alt="a good tutorial" />
           </Collapsible>
-
-          <Collapsible label="Why is my trade not showing up?">
-            <p>The website is still in early development. So there might be some errors.</p>
-          </Collapsible>
         </div>
       </div>
 
