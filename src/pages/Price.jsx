@@ -38,11 +38,18 @@ export default function Price() {
         setData(res)
       })
 
-    fetch('https://api.coingecko.com/api/v3/simple/price?ids=wax&vs_currencies=usd')
-      .then((res) => res.json())
-      .then((data) => {
-        setPrice(data.wax.usd)
-      })
+    const getPrice = () => {
+      fetch('https://api.coingecko.com/api/v3/simple/price?ids=wax&vs_currencies=usd')
+        .then((res) => res.json())
+        .then((data) => {
+          setPrice(data.wax.usd)
+        })
+    }
+
+    const interval = setInterval(getPrice, 60e3)
+    getPrice()
+
+    return () => clearInterval(interval);
   }, [])
 
   return (
